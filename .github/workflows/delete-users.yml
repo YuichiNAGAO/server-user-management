@@ -1,0 +1,67 @@
+name: Delete Users
+on: 
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'If you are sure to delete users, please input "delete"'
+        required: true
+        default: ''
+    branches: [ master ]
+
+jobs:
+  deploy:
+    if: github.event.inputs.logLevel == 'delete'
+    runs-on: [ self-hosted, cpu-server ]
+    env:
+      SUDO_PASSWD: ${{secrets.SUDO_PASSWD}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run ansible playbook to delete users
+        run:  ansible-playbook -i user-management/hosts user-management/delete-users.yml
+
+      - name: Slack Notification on SUCCESS
+        if: success()
+        uses: tokorom/action-slack-incoming-webhook@main
+        env:
+          INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_CHANGELOG_USERS_SHARED_SERVERS }}
+        with:
+          text: Delete Users - Success.
+          attachments: |
+            [
+              {
+                "color": "good",
+                "author_name": "${{ github.actor }}",
+                "author_icon": "${{ github.event.sender.avatar_url }}",
+                "fields": [
+                  {
+                    "title": "GitHub URL",
+                    "value": "${{ github.event.repository.url }}"
+                  }
+                ]
+              }
+            ]
+      
+      - name: Slack Notification on FAILURE
+        if: failure()
+        uses: tokorom/action-slack-incoming-webhook@main
+        env:
+          INCOMING_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_CHANGELOG_USERS_SHARED_SERVERS }}
+        with:
+          text: Delete Users - Failure.
+          attachments: |
+            [
+              {
+                "color": "good",
+                "author_name": "${{ github.actor }}",
+                "author_icon": "${{ github.event.sender.avatar_url }}",
+                "fields": [
+                  {
+                    "title": "GitHub URL",
+                    "value": "${{ github.event.repository.url }}"
+                  }
+                ]
+              }
+            ]
+     
