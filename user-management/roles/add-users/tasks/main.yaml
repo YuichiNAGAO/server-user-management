@@ -1,0 +1,15 @@
+- name: Create users 
+  user:
+    name: "{{ item.user_name }}"
+    state: present
+    shell: /bin/bash
+  with_items:
+  - "{{ user_info }}"
+
+- name: Resister public keys
+  authorized_key:
+    user: "{{ item.user_name }}"
+    state: present
+    key: "{{ item.public_key }}"
+  with_items:
+  - "{{ user_info }}"

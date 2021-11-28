@@ -1,0 +1,9 @@
+- hosts: all
+  remote_user: ansible
+  vars_files:
+    - list-users/delete-users-list.yaml
+  vars:
+    ansible_become_pass: "{{ lookup('env','SUDO_PASSWD') }}"
+  become: true
+  roles:
+    - delete-users
