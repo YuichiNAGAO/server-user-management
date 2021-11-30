@@ -1,3 +1,6 @@
-# サーバー運用
+# 説明
 
-[共同GPUサーバーへのユーザーの一括追加/削除](user-management)
+AnsibleとGithub Actionsを使った、研究室運用におけるユーザーの一括管理を実装したものです。詳しくは下記URLを参照ください。
+
+
+https://yuichinagapan.hatenablog.com/entry/2021/11/25/225329
